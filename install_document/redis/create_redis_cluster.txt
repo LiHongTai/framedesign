@@ -1,0 +1,51 @@
+在redis单机安装完成后开始搭建redis-cluster集群
+
+一．创建文件夹——在redis-cluster目录下创建
+我们计划集群中 Redis 节点的端口号为?9001-9006?，端口号即集群下各实例文件夹。数据存放在?端口号/data?文件夹中
+  mkdir /usr/local/redis-cluster
+cd redis-cluster/ mkdir -p 9001/data 9002/data 9003/data 9004/data 9005/data 9006/data
+
+二．在/usr/local/redis-cluster下创建bin文件夹，用来存放集群运行脚本，并把安装好的 Redis 的src路径下的运行脚本拷贝过来
+mkdir redis-cluster/bin 
+cd /usr/local/redis-4.0.10/src 
+cp mkreleasehdr.sh redis-benchmark redis-check-aof redis-check-dump redis-cli redis-server redis-trib.rb /usr/local/redis-cluster/bin
+
+三．从已安装好的 Redis 中复制一个新的实例到?9001?文件夹，并修改?redis.conf?配置。
+cp -rf /usr/local/redis-4.0.10/* /usr/local/redis-cluster/9001
+
+注意，修改?redis.conf?配置和单点唯一区别是下图部分，其余还是常规的这几项：
+port 9001（每个节点的端口号）
+daemonize yes
+bind 192.168.12.122（绑定当前机器 IP）
+dir /usr/local/redis-cluster/9001/data/（数据文件存放位置）
+pidfile /var/run/redis_9001.pid（pid 9001和port要对应）
+cluster-enabled yes（启动集群模式）
+cluster-config-file nodes9001.conf（9001和port要对应）
+cluster-node-timeout 15000
+appendonly yes
+四．再复制出五个新 Redis 实例
+  cp -rf /usr/local/redis-cluster/9001/* /usr/local/redis-cluster/9002
+五.修改 9002-9006 的 redis.conf 文件
+使用命令:
+vim redis.conf 
+:%s/9001/9002/g
+五．启动实例：
+./redis-server /usr/local/redis-cluster/9002-9006/redis.conf 
+ps -ef|grep redis
+
+随便找一个节点测试:
+   ./redis-cli -h 192.168.12.122 -p 9001
+六．安装集群所需软件
+yum install ruby 
+yum install rubygems 
+gem install redis
+七.进入/usr/local/redis-cluster/bin目录 执行下面的命令
+	1)./redis-trib.rb create --replicas 1 192.168.12.122:9001 192.168.12.122:9002 192.168.12.122:9003 192.168.12.122:9004 192.168.12.122:9005 192.168.12.122:9006
+		调用 ruby 命令来进行创建集群，--replicas 1 表示主从复制比例为 1:1，即一个主节点对应一个从节点；
+		然后，默认给我们分配好了每个主节点和对应从节点服务，以及 solt 的大小，
+		因为在 Redis 集群中有且仅有 16383 个 solt ，
+		默认情况会给我们平均分配，当然你可以指定，后续的增减节点也可以重新分配。
+	2).然后等待输入 yes即可
+	
+	3).使用集群命令
+		./redis-cli -c -h 192.168.119.131 -p 9001

@@ -1,0 +1,31 @@
+Redis单机安装——Redhat-linux7
+一．到官网https://redis.io/download下载最新版本redis
+  这里下载的是redis-4.0.10.tar.gz 版本
+二．使用Xftp把下载的redis上传到linux环境
+ 上传的路径为:/usr/local/src
+三．测试是否具有gcc环境
+使用root用户登陆终端
+1.测试命令: yum install gcc-c++
+2.如果没有gcc环境则需要执行下面的命令安装gcc环境
+yum -y install gcc automake autoconf libtool make
+3.使用命令 gcc -v 或者 rpm -qa | grep gcc
+四．解压redis安装包到/usr/local/目录下
+   使用命令为: tar -xvf redis-4.0.10.tar.gz -C /usr/local/
+五．进入/usr/local/redis-4.0.10目录下 使用make命令编译
+六．指定安装目录：make PREFIX= /usr/local/redis install
+七．进入安装好的/usr/local/redis/bin后台目录下
+1.使用 ./redis-server 启动redis
+2.在新打开一个终端 使用 ./redis-cli 打开一个客户端操作redis
+八．设置redis后台启动
+1.进入redis-4.0.10目录下
+2.将redis.conf 拷贝到/usr/local/bin/目录下
+       cp redis.conf /usr/local/redis/bin/
+3.进入redis.conf 把daemonize 改为yes?
+4.再次在后端启动
+命令:./redis-server redis.conf
+     		./redis-cli
+5.使用exit退出客户端
+6.使用命令ps -ef|grep redis 查看进程
+7.Kill -9 进程ID 杀死进程
+8.?./redis-cli shutdown? 关闭服务端
+   9.开启远程访问，关闭防火墙

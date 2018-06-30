@@ -1,0 +1,27 @@
+解决办法是 先安装rvm，再把ruby版本提升至2.3.3
+
+1.安装curl
+	yum install curl
+2.安装RVM
+	gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+    curl -L get.rvm.io | bash -s stable
+3.source /usr/local/rvm/scripts/rvm
+
+4.查看现有ruby版本
+	ruby --version
+
+5. 查看rvm库中已知的ruby版本
+	rvm list known
+
+6.安装一个ruby版本
+	rvm install 2.4.1
+
+7.使用一个ruby版本
+	rvm use 2.4.1
+8.设置默认版本
+	rvm use 2.4.1 --default
+	
+9.卸载一个已知版本
+	rvm remove 2.0.0
+10.安装redis:
+	gem install redis

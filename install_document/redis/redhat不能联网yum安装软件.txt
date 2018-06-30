@@ -1,0 +1,12 @@
+1.wget http://mirrors.163.com/.help/CentOS7-Base-163.repo
+
+
+2.mv CentOS7-Base-163.repo /etc/yum.repos.d/
+
+3.把 CentOS7-Base-163.repo中的$releasever替换成7
+
+4.清楚所有缓存
+yum clean all
+
+5.获取yum列表
+yum makecache
